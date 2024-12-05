@@ -67,7 +67,7 @@ impl SolutionGold<usize, usize> for Day {
 
 
 
-        
+
         1 as usize
     } //calculate gold
 }
@@ -81,13 +81,13 @@ fn test_silver_sample() {
 #[test]
 fn test_silver_real() {
     let output = Day::calculate_silver(Day::INPUT_REAL);
-    assert_eq!(174561379, output);
+    assert_eq!(190604937, output);
 }
 
 #[test]
 fn test_gold_sample() {
     let output = Day::calculate_gold(Day::INPUT_SAMPLE_GOLD);
-    assert_eq!(161, output);
+    assert_eq!(48, output);
 }
 
 #[test]
