@@ -52,7 +52,7 @@ impl SolutionGold<usize, usize> for Day {
                 {
                     if let (Ok(left_into_num), Ok(right_into_num)) = (left.parse::<u32>(), right.parse::<u32>())
                         {
-                            total += left_into_num * right_into_num;
+                            total += (left_into_num * right_into_num);
                         }
                 }
         }
@@ -82,7 +82,7 @@ fn test_silver_real() {
 #[test]
 fn test_gold_sample() {
     let output = Day::calculate_gold(Day::INPUT_SAMPLE_GOLD);
-    assert_eq!(48, output);
+    assert_eq!(161, output);
 }
 
 #[test]
