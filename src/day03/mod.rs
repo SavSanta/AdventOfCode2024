@@ -13,16 +13,7 @@ impl SolutionSilver<usize> for Day {
 
     fn calculate_silver(input: &str) -> usize {
         const MAX_NUM_LEN: usize = 4;
-        let input = input.as_bytes();
 
-        1 as usize
-    } // calculate_silver
-}
-
-impl SolutionGold<usize, usize> for Day {
-    const INPUT_SAMPLE_GOLD: &'static str = include_str!("input_sample_gold.txt");
-
-    fn calculate_gold(input: &str) -> usize {
         use regex::Regex;
         use std::borrow::BorrowMut;               // in order to be able to borrow mutably without prelude
 
@@ -64,6 +55,20 @@ impl SolutionGold<usize, usize> for Day {
         // In a future review visit go back above and edit reddit to use lookahead/around to skip the step where I replace the parentheses.
 
 
+    } // calculate_silver
+}
+
+impl SolutionGold<usize, usize> for Day {
+    const INPUT_SAMPLE_GOLD: &'static str = include_str!("input_sample_gold.txt");
+
+    fn calculate_gold(input: &str) -> usize {
+        const MAX_NUM_LEN: usize = 4;
+        let input = input.as_bytes();
+
+
+
+        
+        1 as usize
     } //calculate gold
 }
 
