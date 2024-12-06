@@ -1,6 +1,7 @@
 use utils::fast_parse_int;
-
 use super::*;
+use std::prelude::*;
+use std::collections::HashMap;
 
 pub struct Day;
 
@@ -10,75 +11,48 @@ impl SolutionSilver<usize> for Day {
     const INPUT_REAL: &'static str = include_str!("input_real.txt");
 
     fn calculate_silver(input: &str) -> usize {
-        let input = input.as_bytes();
-
-        // all numbers seem to be from 11 to 99 (inclusive)
-        // this fits in a 128bit bitmap
+        let mut total = 0;
         const BUFFER_LEN: usize = 99 - 11 + 1;
-        let mut rules = [0u128; BUFFER_LEN];
+        let mut rules: HashMap<u128, Vec<u128>> = HashMap::new();
+    
+        let (rules_data, updates_data) = input.split_once("\n\n").unwrap();
+    
+            /* Failure to get this to work as a pipeline so.....
+            rules_data.lines().map(|item| item.split_terminator('|'))
+                                                                    
+                                                                     .collect::<HashMap<u128,Vec<u128>>>();
+                                                                    //.into_iter()
+                                                                    //.map(|x| HashMap::from(x));
+            */
+    
+            // So we go oldschool-ish with the help of GPT
+            for line in rules_data.lines() {
+            // Split the line by the pipe character '|', and collect the parts into a vector of strings
+            let parts: Vec<&str> = line.split_terminator('|').collect();
+            
+            // Parse the first part as the key (u128), and the remaining parts as values (Vec<u128>)
+            if let Some(&key_str) = parts.get(0) {
+                // Parse the key (first element in the split)
+                if let Ok(key) = key_str.parse::<u128>() {
+                    // Parse the remaining parts as a vector of u128 values
+                    let value: u128 = parts[1].parse::<u128>().ok().unwrap();
 
-        let mut index = 0;
-        loop {
-            let num1_1 = input[index];
-            if num1_1 == b'\n' {
-                break;
-            }
-
-            let num1_1 = num1_1 - b'0';
-            let num1_2 = input[index + 1] - b'0';
-            let num2_1 = input[index + 3] - b'0';
-            let num2_2 = input[index + 4] - b'0';
-
-            let num1 = (num1_1 * 10 + num1_2) as usize;
-            let num2 = (num2_1 * 10 + num2_2) as usize;
-
-            rules[num1 - 11] |= 1 << num2;
-            index += 6;
-        }
-
-        // skip empty line
-        index += 1;
-
-        let mut sum = 0;
-        while index < input.len() {
-            let mut seen = 0u128;
-            let start_index = index;
-            let ok = loop {
-                let num_1 = input[index] - b'0';
-                let num_2 = input[index + 1] - b'0';
-                let num = (num_1 * 10 + num_2) as usize;
-
-                let ok = rules[num - 11] & seen == 0;
-                index += 3;
-
-                if !ok {
-                    // loop until eol or eof, skipping the other numbers (they dont matter anymore)
-                    while index < input.len() && input[index - 1] != b'\n' {
-                        index += 3;
+                    // This is a rought one due to mutability and RUST strictness.
+                    // One has to perform a get_mut over insert here as HashMap doesnt implement IndMut 
+                    if rules.contains_key(&key) 
+                    {
+                        rules.get_mut(&key).unwrap().push(value);
                     }
-                    break false;
+                    else {
+                        // Need to find out the macro less version
+                        rules.insert(key, vec![value]);
+                    }
+
                 }
-
-                // mark as seen
-                seen |= 1 << num;
-
-                if index >= input.len() || input[index - 1] == b'\n' {
-                    break true;
-                }
-            };
-
-            if ok {
-                // find the middle number by checking the length of the line we processed
-                let len = index - start_index;
-                let count = len / 3;
-                let number_index = count / 2;
-                let byte_index = number_index * 3;
-                sum += (input[start_index + byte_index] - b'0') as usize * 10;
-                sum += (input[start_index + byte_index + 1] - b'0') as usize;
             }
         }
 
-        sum
+       return  total;
     }
 }
 
