@@ -2,8 +2,45 @@ use utils::fast_parse_int;
 use super::*;
 use std::prelude::*;
 use std::collections::HashMap;
+use std::cmp::Ordering;
+use std::sync::LazyLock;
 
+static rules: LazyLock<HashMap<u128, Vec<u128>>> = LazyLock::new(|| { HashMap::new()});
+static mut updates: Vec<Vec<u128>> = Vec::new();
 pub struct Day;
+
+trait FakeBubbleSort {
+    unsafe fn fake_bubble_sort(a : u128, b: u128) -> std::cmp::Ordering {}
+}
+
+impl FakeBubbleSort for  Day {
+    
+    unsafe fn fake_bubble_sort(a: u128, b: u128) -> std::cmp::Ordering {
+
+    // Would be cleaner as a match but need to research how to pullout the vec. Prob another nested match
+    /*    let mut map = HashMap::new();
+    map.insert(128, vec![144,177,128,761]);
+    let test = map.get_key_value(&128);
+    match test {
+            Some((u128, _)) => { println!("Think it matched {:?}", test.unwrap()[1]); },
+            None => { println!("No Match Baby");},
+            _ => { panic!("Should not have reached unmatchable"); }
+    } */
+
+    if !rules.contains_key(a) {
+        return std::cmp::Ordering::Equal;
+    }
+
+
+    if rules[&a].contains_key(&b) {
+        return std::cmp::Ordering::Greater;
+    }
+    else {
+        return std::cmp::Ordering::Less;
+    }
+
+    }
+}
 
 impl SolutionSilver<usize> for Day {
     const DAY: u32 = 5;
@@ -13,8 +50,8 @@ impl SolutionSilver<usize> for Day {
     fn calculate_silver(input: &str) -> usize {
         let mut total = 0;
         const BUFFER_LEN: usize = 99 - 11 + 1;
-        let mut rules: HashMap<u128, Vec<u128>> = HashMap::new();
     
+    unsafe {
         let (rules_data, updates_data) = input.split_once("\n\n").unwrap();
     
             /* Failure to get this to work as a pipeline so.....
@@ -37,7 +74,7 @@ impl SolutionSilver<usize> for Day {
                     // Parse the remaining parts as a vector of u128 values
                     let value: u128 = parts[1].parse::<u128>().ok().unwrap();
 
-                    // This is a rought one due to mutability and RUST strictness.
+                    // This is a rough one due to mutability and RUST strictness.
                     // One has to perform a get_mut over insert here as HashMap doesnt implement IndMut 
                     if rules.contains_key(&key) 
                     {
@@ -52,16 +89,31 @@ impl SolutionSilver<usize> for Day {
             }
         }
 
-       return  total;
+        // Begin populating updates 
+        updates = updates_data.lines().map(|line| {
+            line.split_terminator(",")
+                .map(|m| m.parse::<u128>().unwrap()) 
+            }
+            .collect::<Vec<_>>()
+        ).collect::<Vec<_>>();
     }
+        
+        
+
+
+        return  total;
+
+    }
+
 }
 
 impl SolutionGold<usize, usize> for Day {
     const INPUT_SAMPLE_GOLD: &'static str = include_str!("input_sample_gold.txt");
 
     fn calculate_gold(input: &str) -> usize {
-        let (rules, updates) = input.split_once("\n\n").unwrap();
-        let rules: Vec<(usize, usize)> = rules
+        
+        (rules, updates) = input.split_once("\n\n").unwrap();
+        rules: Vec<(usize, usize)> = rules
             .lines()
             .map(|line| {
                 let (l, r) = line.split_once('|').unwrap();
@@ -72,7 +124,7 @@ impl SolutionGold<usize, usize> for Day {
             .lines()
             .map(|line| line.split(',').map(fast_parse_int).collect())
             .collect();
-
+        
         updates
             .into_iter()
             .filter(|u| {
@@ -113,7 +165,7 @@ impl SolutionGold<usize, usize> for Day {
                     });
                 }
 
-                u
+                
             })
             .map(|u| u[u.len() / 2])
             .sum()
