@@ -3,19 +3,27 @@ use super::*;
 use std::prelude::*;
 use std::collections::HashMap;
 use std::cmp::Ordering;
-use std::sync::LazyLock;
+use std::sync::{LazyLock,Mutex};
 
-static rules: LazyLock<HashMap<u128, Vec<u128>>> = LazyLock::new(|| { HashMap::new()});
+// Previous compiler suggestion but wouldnt work as mutable. Have to move to Mutex below
+//static rules: LazyLock<HashMap<u128, Vec<u128>>> = LazyLock::new(|| { HashMap::new()});
+//static rules: Mutex<HashMap<u128, Vec<u128>>> = Mutex::new(HashMap::new().insert(7777 , vec![7777]));
 static mut updates: Vec<Vec<u128>> = Vec::new();
-pub struct Day;
+
+
+// Failed above with statics/global so trying redefine of Day
+pub struct Day { rules: HashMap<u128, Vec<u128>>}
 
 trait FakeBubbleSort {
-    unsafe fn fake_bubble_sort(a : u128, b: u128) -> std::cmp::Ordering {}
+    unsafe fn fake_bubble_sort(&self, a : u128, b: u128) -> std::cmp::Ordering;
+
+
+
 }
 
-impl FakeBubbleSort for  Day {
+impl FakeBubbleSort for Day {
     
-    unsafe fn fake_bubble_sort(a: u128, b: u128) -> std::cmp::Ordering {
+    unsafe fn fake_bubble_sort(&self, a: u128, b: u128) -> std::cmp::Ordering {
 
     // Would be cleaner as a match but need to research how to pullout the vec. Prob another nested match
     /*    let mut map = HashMap::new();
@@ -27,12 +35,12 @@ impl FakeBubbleSort for  Day {
             _ => { panic!("Should not have reached unmatchable"); }
     } */
 
-    if !rules.contains_key(a) {
+    if !self.rules.contains_key(&a) {
         return std::cmp::Ordering::Equal;
     }
 
 
-    if rules[&a].contains_key(&b) {
+    if self.rules[&a].contains(&b) {
         return std::cmp::Ordering::Greater;
     }
     else {
@@ -47,6 +55,7 @@ impl SolutionSilver<usize> for Day {
     const INPUT_SAMPLE: &'static str = include_str!("input_sample.txt");
     const INPUT_REAL: &'static str = include_str!("input_real.txt");
 
+    
     fn calculate_silver(input: &str) -> usize {
         let mut total = 0;
         const BUFFER_LEN: usize = 99 - 11 + 1;
@@ -76,13 +85,13 @@ impl SolutionSilver<usize> for Day {
 
                     // This is a rough one due to mutability and RUST strictness.
                     // One has to perform a get_mut over insert here as HashMap doesnt implement IndMut 
-                    if rules.contains_key(&key) 
+                    if self.rules.contains_key(&key) 
                     {
-                        rules.get_mut(&key).unwrap().push(value);
+                        self.rules.get_mut(&key).unwrap().push(value);
                     }
                     else {
                         // Need to find out the macro less version
-                        rules.insert(key, vec![value]);
+                        self.rules.insert(key, vec![value]);
                     }
 
                 }
