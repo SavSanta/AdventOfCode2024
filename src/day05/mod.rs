@@ -85,13 +85,13 @@ impl SolutionSilver<usize> for Day {
 
                     // This is a rough one due to mutability and RUST strictness.
                     // One has to perform a get_mut over insert here as HashMap doesnt implement IndMut 
-                    if self.rules.contains_key(&key) 
+                    if rules.contains_key(&key) 
                     {
-                        self.rules.get_mut(&key).unwrap().push(value);
+                        rules.get_mut(&key).unwrap().push(value);
                     }
                     else {
                         // Need to find out the macro less version
-                        self.rules.insert(key, vec![value]);
+                        rules.insert(key, vec![value]);
                     }
 
                 }
