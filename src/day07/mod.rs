@@ -32,6 +32,7 @@ impl SolutionSilver<u64> for Day {
 
 
     }
+}
 
 impl SolutionGold<u64, u64> for Day {
     const INPUT_SAMPLE_GOLD: &'static str = include_str!("input_sample_gold.txt");
