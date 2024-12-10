@@ -11,6 +11,26 @@ impl SolutionSilver<u64> for Day {
 
     fn calculate_silver(input: &str) -> u64 {
         
+        #[derive(Debug)]
+        struct Equation {
+            total : u128,
+            numbers : Vec<u32>,
+        }
+        
+        // Organize the data into 
+        let mut parsed_data: Vec<Equation> = Vec::new();
+        parsed_data = input
+            .lines()
+            .map(|line| {
+                let (total, nums) = line.split_once(": ").expect("Things went wrong on processing");
+                let numbers = nums.split(" ").inspect(|y| println!("Value of {y}")).map(|num| num.parse::<u32>().expect("Err: Processing u32s")).collect();
+                Equation { total: total.parse::<u128>().unwrap(), numbers }
+            }).collect();
+    
+        dbg!(parsed_data);
+
+
+
     }
 
 impl SolutionGold<u64, u64> for Day {
