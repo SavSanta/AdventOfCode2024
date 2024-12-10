@@ -10,41 +10,8 @@ impl SolutionSilver<u64> for Day {
     const INPUT_REAL: &'static str = include_str!("input_real.txt");
 
     fn calculate_silver(input: &str) -> u64 {
-        input
-            .lines()
-            .map(|line| {
-                let (out, rest) = line.split_once(':').unwrap();
-                let expected_result = fast_parse_int(out) as u64;
-                let rest = rest
-                    .trim()
-                    .split(" ")
-                    .map(fast_parse_int)
-                    .map(|a| a as u64)
-                    .collect::<Vec<_>>();
-
-                for i in 0..(1 << (rest.len())) {
-                    let mut i = i;
-                    let mut current_result = 0;
-                    for num in &rest {
-                        let operation = i & 1;
-                        i >>= 1;
-
-                        if operation == 0 {
-                            current_result += num;
-                        } else {
-                            current_result *= num;
-                        }
-                    }
-
-                    if current_result == expected_result {
-                        return expected_result;
-                    }
-                }
-                0
-            })
-            .sum()
+        
     }
-}
 
 impl SolutionGold<u64, u64> for Day {
     const INPUT_SAMPLE_GOLD: &'static str = include_str!("input_sample_gold.txt");
