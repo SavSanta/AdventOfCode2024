@@ -1,8 +1,44 @@
 use utils::fast_parse_int;
-
 use super::*;
 
 pub struct Day;
+
+// 5  = 2 + 2 + 1
+fn equation_valid(expectedresult: u64, result: u64, index: u64, nums: Vec<u64> ) -> bool {
+    // Recursive function as seen in others in Java, Kotlin, and CSharp
+    // HyperNeutrino has a great more mathy but concise solver
+
+    if result > expectedresult {
+        return false;
+    }
+
+    // may need to change to >= in case my indexing somehow jumps more than by one lol.
+    if index == nums.len() as u64 {
+        // If we're at the last index of the array then we have no more numbers
+        // May need to minus by 1 depending on 0-base or not contributes a factor
+
+        // CSince we're on the last loop we vcan check the overall result 
+        if  result == expectedresult {
+            return true; 
+        }
+        return false
+    }
+
+    let current_num = nums[index as usize];
+    let new_result = result + current_num;
+    if new_result <= expectedresult {
+        if equation_valid(expectedresult, new_result, index+1, nums.clone()) {
+            return true;
+        }
+    }
+
+    let new_result = result * current_num;
+    if new_result <= expectedresult {
+        return equation_valid(expectedresult, new_result, index+1, nums.clone());
+    }
+
+    return false;
+}
 
 impl SolutionSilver<u64> for Day {
     const DAY: u32 = 7;
@@ -14,24 +50,28 @@ impl SolutionSilver<u64> for Day {
         #[derive(Debug)]
         struct Equation {
             total : u128,
-            numbers : Vec<u32>,
+            numbers : Vec<u64>,
         }
-        
+      
         // Organize the data into 
         let mut parsed_data: Vec<Equation> = Vec::new();
         parsed_data = input
             .lines()
             .map(|line| {
                 let (total, nums) = line.split_once(": ").expect("Things went wrong on processing");
-                let numbers = nums.split(" ").inspect(|y| println!("Value of {y}")).map(|num| num.parse::<u32>().expect("Err: Processing u32s")).collect();
+                let numbers = nums.split(" ").map(|num| num.parse::<u64>().expect("Err: Processing u32s")).collect();
                 Equation { total: total.parse::<u128>().unwrap(), numbers }
             }).collect();
     
-        dbg!(parsed_data);
+       let solu1= parsed_data.iter()
+                                        .filter(|x| equation_valid(x.total as u64, 0, 0, x.numbers.clone()))
+                                        .collect::<Vec<_>>()
+                                        .into_iter()
+                                        .fold(0, |acc, x| acc + x.total);
 
-
-
+    solu1 as u64
     }
+
 }
 
 impl SolutionGold<u64, u64> for Day {
@@ -93,7 +133,7 @@ fn test_silver_sample() {
 #[test]
 fn test_silver_real() {
     let output = Day::calculate_silver(Day::INPUT_REAL);
-    assert_eq!(465126289353, output);
+    assert_eq!(7885693428401, output);
 }
 
 #[test]
