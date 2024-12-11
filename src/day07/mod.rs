@@ -59,7 +59,7 @@ impl SolutionSilver<u64> for Day {
             .lines()
             .map(|line| {
                 let (total, nums) = line.split_once(": ").expect("Things went wrong on processing");
-                let numbers = nums.split(" ").map(|num| num.parse::<u64>().expect("Err: Processing u32s")).collect();
+                let numbers = nums.split(" ").map(|num| num.parse::<u64>().expect("Err: Processing u64s")).collect();
                 Equation { total: total.parse::<u128>().unwrap(), numbers }
             }).collect();
     
