@@ -20,20 +20,21 @@ trait FakeBubbleSort {
 
 
 }
-
+/*
 impl FakeBubbleSort for Day {
     
     unsafe fn fake_bubble_sort(&self, a: u128, b: u128) -> std::cmp::Ordering {
 
     // Would be cleaner as a match but need to research how to pullout the vec. Prob another nested match
-    /*    let mut map = HashMap::new();
+        let mut map = HashMap::new();
     map.insert(128, vec![144,177,128,761]);
     let test = map.get_key_value(&128);
     match test {
             Some((u128, _)) => { println!("Think it matched {:?}", test.unwrap()[1]); },
             None => { println!("No Match Baby");},
             _ => { panic!("Should not have reached unmatchable"); }
-    } */
+   
+    } 
 
     if !self.rules.contains_key(&a) {
         return std::cmp::Ordering::Equal;
@@ -46,9 +47,9 @@ impl FakeBubbleSort for Day {
     else {
         return std::cmp::Ordering::Less;
     }
+ 
 
-    }
-}
+}*/
 
 impl SolutionSilver<usize> for Day {
     const DAY: u32 = 5;
@@ -57,7 +58,7 @@ impl SolutionSilver<usize> for Day {
 
     
     fn calculate_silver(input: &str) -> usize {
-        let mut total = 0;
+/*        let mut total = 0;
         const BUFFER_LEN: usize = 99 - 11 + 1;
     
     unsafe {
@@ -111,16 +112,17 @@ impl SolutionSilver<usize> for Day {
 
 
         return  total;
-
+**/
+    return 2 as usize;
     }
 
-}
+} 
 
 impl SolutionGold<usize, usize> for Day {
     const INPUT_SAMPLE_GOLD: &'static str = include_str!("input_sample_gold.txt");
 
     fn calculate_gold(input: &str) -> usize {
-        
+/*         
         (rules, updates) = input.split_once("\n\n").unwrap();
         rules: Vec<(usize, usize)> = rules
             .lines()
@@ -177,7 +179,8 @@ impl SolutionGold<usize, usize> for Day {
                 
             })
             .map(|u| u[u.len() / 2])
-            .sum()
+            .sum()**/
+            return 2 as usize;
     }
 }
 
